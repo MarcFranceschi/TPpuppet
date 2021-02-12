@@ -4,5 +4,6 @@
 #
 # @example
 #   include lamp::apache
-class lamp::apache {
+class lamp::apache { 'apache'
+  default_vhost => false,
 }

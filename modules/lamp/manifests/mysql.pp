@@ -4,5 +4,7 @@
 #
 # @example
 #   include lamp::mysql
-class lamp::mysql {
+class lamp::mysql { '::mysql::server':
+  root_password => 'U3pkBDQf2',
+  restart => true,
 }
