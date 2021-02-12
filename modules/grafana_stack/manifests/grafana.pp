@@ -3,8 +3,8 @@
 # A description of what this class does
 #
 # @example
-#   include autre::grafana
-class autre::grafana {
+#   include grafana::grafana
+class grafana_stack::grafana {
   class { 'grafana':
       cfg => {
         app_mode => 'production',

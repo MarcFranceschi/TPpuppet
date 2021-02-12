@@ -2,5 +2,7 @@ node default {
   include lamp::apache
   include lamp::mysql
   include lamp::php
-  include autre::grafana
+  include grafana_stack::grafana
+  include grafana_stack::influxdb
+  include grafana_stack::telegraf
 }
