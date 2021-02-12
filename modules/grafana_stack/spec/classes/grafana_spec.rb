@@ -2,7 +2,7 @@
 
 require 'spec_helper'
 
-describe 'lamp::grafana' do
+describe 'grafana_stack::grafana' do
   on_supported_os.each do |os, os_facts|
     context "on #{os}" do
       let(:facts) { os_facts }
