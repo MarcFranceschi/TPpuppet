@@ -8,8 +8,8 @@ class lamp::apache {
   class { '::apache' :
       default_vhost => false,
   }
-  apache::vhost { 'vhost.example.com':
+  apache::vhost { 'loving-raman.my-ni.fr':
   port    => '80',
-  docroot => '/var/www/vhost',
+  docroot => '/var/www',
   }
 }
