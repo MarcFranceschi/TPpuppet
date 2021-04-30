@@ -1,0 +1,26 @@
+node default {
+  include lamp::apache
+  include lamp::mysql
+  include lamp::php
+  include grafana_stack::grafana
+  include influxdb
+  include grafana_stack::telegraf
+}
+
+class my_fw::post {
+  Firewall {
+    require => undef,
+  }
+
+  # Default firewall rules
+  firewall { '001 allow http https ssh access':
+    dport  => [80, 443, 22],
+    proto  => 'tcp',
+    action => 'accept',
+  }
+  ->firewall { '002 accept all to lo interface':
+    proto   => 'all',
+    iniface => 'lo',
+    action  => 'accept',
+  }
+}
