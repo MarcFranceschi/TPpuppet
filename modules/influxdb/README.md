@@ -26,8 +26,6 @@ such as databases, users, and privileges.
 
 ## Deprecation Warning
 
-<<<<<<< HEAD
-=======
 Notes for version 5.0.0+:
 
 This module was a refactor of the 4.x version to handle influxdb >= 1.x.
@@ -55,13 +53,13 @@ The other configuration changes are managed by the `influxdb.conf.erb` template 
 
 Notes for versions older than 3.1.1:
 
->>>>>>> 891dd648f90a5ad265545c73d7abdd31770d7e09
 This release is a major refactoring of the module which means that the API
 changed in backwards incompatible ways. If your project depends on the old API
-and you need to use influxdb prior to 0.9.X, please pin your module
-dependencies to 0.1.2 version to ensure your environments don't break.
+and you need to use influxdb prior to 0.10.X, please pin your module
+dependencies to 0.1.2 (0.8.X) or 2.2.2 (0.9.X) version to ensure your environments
+don't break.
 
-*NOTE*: Until 1.0.0 release the API may change,
+*NOTE*: Until influxdb 1.0.0 is releases the API of this module may change,
 however I will try my best to avoid it.
 
 ## Installation
@@ -91,14 +89,6 @@ Install influxdb
 class {'influxdb':}
 ```
 
-<<<<<<< HEAD
-Enable Graphite plugin
-
-```puppet
-class {'influxdb::server':
-  graphite_enabled => true,
-  graphite_tags    => ['region=us-east', 'zone=1c'],
-=======
 ```puppet
 
 # These are defaults, but demonstrates how you can change sections of data
@@ -141,19 +131,12 @@ $graphite_config = {
 class { 'influxdb':
   manage_repos    => true,
   graphite_config => $graphite_config,
->>>>>>> 891dd648f90a5ad265545c73d7abdd31770d7e09
 }
 ```
 
 Enable Collectd plugin
 
 ```puppet
-<<<<<<< HEAD
-class {'influxdb::server':
-  collectd_enabled      => true,
-  collectd_bind_address => ':2004',
-  collectd_database     => 'collectd',
-=======
 
 # most of these are defaults, unless otherwise noted
 $collectd_config = {
@@ -173,42 +156,12 @@ $collectd_config = {
 class {'influxdb':
   manage_repos    => true,
   collectd_config => $collectd_config,
->>>>>>> 891dd648f90a5ad265545c73d7abdd31770d7e09
 }
 ```
 
 Enable UDP listener
 
 ```puppet
-<<<<<<< HEAD
-$udp_options = [
-    { 'enabled'       => true,
-      'bind-address'  => '":8089"',
-      'database'      => '"udp_db1"',
-      'batch-size'    => 10000,
-      'batch-timeout' => '"1s"',
-      'batch-pending' => 5,
-    },
-    { 'enabled'       => true,
-      'bind-address'  => '":8090"',
-      'database'      => '"udp_db2"',
-      'batch-size'    => 10000,
-      'batch-timeout' => '"1s"',
-      'batch-pending' => 5,
-    },
-]
-
-class {'influxdb::server':
-	reporting_disabled    => true,
-	http_auth_enabled     => true,
-	version               => '0.9.4.2',
-	shard_writer_timeout  => '10s',
-	cluster_write_timeout => '10s',
-	udp_options           => $udp_options,
-}
-```
-
-=======
 
 
 # most of these are defaults unless otherwise noted.
@@ -258,7 +211,6 @@ class {'influxdb':
   opentsdb_config => $opentsdb_config,
 }
 ```
->>>>>>> 891dd648f90a5ad265545c73d7abdd31770d7e09
 
 ## Reference
 
@@ -306,18 +258,6 @@ Default: influxdb/influxdb.conf.erb
 The path to the template file that puppet uses to generate the start config.
 Default: influxdb/influxdb_default.erb
 
-<<<<<<< HEAD
-##### `hostname`
-
-Server hostname used for clustering.
-Default: undef
-
-##### `bind_address`
-
-This setting can be used to configure InfluxDB to bind to and listen for
-connections from applications on this address.
-If not specified, the module will use the default for your OS distro.
-=======
 ##### `service_enabled`
 
 Boolean to decide if the service should be enabled.
@@ -332,7 +272,6 @@ Default: running
 
 Boolean to decide if the service should be managed with puppet or not.
 Default: true
->>>>>>> 891dd648f90a5ad265545c73d7abdd31770d7e09
 
 ##### `manage_repos`
 
@@ -361,85 +300,16 @@ Default: /var/log/influxdb/influxd.log
 String of startup config options that need to be present.
 Default: undef
 
-<<<<<<< HEAD
-Wal dir for the storage engine 0.9.3+
-Default: /var/opt/influxdb/wal
-=======
->>>>>>> 891dd648f90a5ad265545c73d7abdd31770d7e09
 
 ##### `global_config`
 
-<<<<<<< HEAD
-Location of the meta dir
-Default: /var/opt/influxdb/meta
-=======
 A hash of global configuration options for `influxdb.conf`
->>>>>>> 891dd648f90a5ad265545c73d7abdd31770d7e09
 
 *NOTE*: The default for this hash is what is in 1.2.0 of the influx docs.
 
 [Influx Global Options](https://docs.influxdata.com/influxdb/v1.2/administration/config/#global-options)
 
-<<<<<<< HEAD
-##### `wal_ready_series_size`
-
-When a series in the WAL in-memory cache reaches this size in bytes it is
-marked as ready to flush to the index.
-NEW in 0.9.3+
-Default: 25600
-
-##### `wal_compaction_threshold`
-
-Flush and compact a partition once this ratio of series are over the ready size.
-NEW in 0.9.3+
-Default: 0.6
-
-##### `wal_max_series_size`
-
-Force a flush and compaction if any series in a partition
-gets above this size in bytes.
-NEW in 0.9.3+
-Default: 2097152
-
-##### `wal_flush_cold_interval`
-
-Force a flush of all series and full compaction if there have been
-no writes in this amount of time.
-This is useful for ensuring that shards that are cold for writes
-don't keep a bunch of data cached in memory and in the WAL.
-NEW in 0.9.3+
-Default: 10m
-
-##### `wal_partition_size_threshold`
-
-Force a partition to flush its largest series if it reaches
-this approximate size in bytes.
-Remember there are 5 partitions so you'll need at least
-5x this amount of memory. The more memory you have, the bigger this can be.
-NEW in 0.9.3+Default: 20971520
-
-##### `max_wal_size`
-
-Maximum size the WAL can reach before a flush.
-*DEPRECATED* since version 0.9.3.
-Default: 100MB
-
-##### `wal_flush_interval`
-
-Maximum time data can sit in WAL before a flush.
-*DEPRECATED* since version 0.9.3.
-Default: 10m
-
-##### `wal_partition_flush_delay`
-
-The delay time between each WAL partition being flushed.
-*DEPRECATED* since version 0.9.3.
-Default: 2s
-
-##### `shard_writer_timeout`
-=======
 [params.pp](manifests/params.pp#L21)
->>>>>>> 891dd648f90a5ad265545c73d7abdd31770d7e09
 
 
 ##### `meta_config`
@@ -499,78 +369,6 @@ A hash of retention configuration options for `influxdb.conf`
 
 A hash of shard_precreation configuration options for `influxdb.conf`
 
-<<<<<<< HEAD
-##### `graphite_enabled`
-
-Controls one or many listeners for Graphite data.
-Default: false
-
-##### `graphite_bind_address`
-
-Default: :2003
-
-##### `graphite_protocol`
-
-Default: tcp
-
-##### `graphite_consistency_level`
-
-Default: one
-
-##### `graphite_separator`
-
-Default: .
-
-##### `graphite_tags`
-
-The "measurement" tag is special and the corresponding field
-will become the name of the metric.
-Default: \[undef\]
-
-##### `graphite_templates`
-
-Default: false
-
-##### `graphite_ignore_unnamed`
-
-If set to true, when the input metric name has more fields than `name-schema`
-specified, the extra fields will be ignored.
-Default: true
-
-##### `collectd_enabled`
-
-Controls the listener for collectd data.
-Default: false
-
-##### `collectd_bind_address`
-
-Default: undef
-
-##### `collectd_database`
-
-Default: undef
-
-##### `collectd_typesdb`
-
-Default: undef
-
-##### `opentsdb_enabled`
-
-Controls the listener for OpenTSDB data.
-Default: false
-
-##### `opentsdb_bind_address`
-
-Default: undef
-
-##### `opentsdb_database`
-
-Default: undef
-
-##### `opentsdb_retention_policy`
-
-Default: undef
-=======
 *NOTE*: The default for this hash is what is in 1.2.0 of the influx docs
 
 [Influx Shard Precreation Options](https://docs.influxdata.com/influxdb/v1.2/administration/config/#shard-precreation)
@@ -599,7 +397,6 @@ A hash of admin configuration options for `influxdb.conf`
 
 [params.pp](manifests/params.pp#74)
 
->>>>>>> 891dd648f90a5ad265545c73d7abdd31770d7e09
 
 ##### `http_config`
 
@@ -612,35 +409,14 @@ A hash of http configuration options for `influxdb.conf`
 [params.pp](manifests/params.pp#81)
 
 
-<<<<<<< HEAD
-##### `continuous_queries_enabled`
-=======
 ##### `subscriber_config`
 
 A hash of subscriber configuration options for `influxdb.conf`
 
 *NOTE*: The default for this hash is what is in 1.2.0 of the influx docs
->>>>>>> 891dd648f90a5ad265545c73d7abdd31770d7e09
 
 [Influx Subscriber Options](https://docs.influxdata.com/influxdb/v1.2/administration/config/#subscriber)
 
-<<<<<<< HEAD
-##### `continuous_queries_recompute_previous_n`
-
-Default: 2
-
-##### `continuous_queries_recompute_no_older_than`
-
-Default: 10m
-
-##### `continuous_queries_compute_runs_per_interval`
-
-Default: 10
-
-##### `continuous_queries_compute_no_more_than`
-
-Default: 2m
-=======
 [params.pp](manifests/params.pp#99)
 
 
@@ -651,18 +427,13 @@ A hash of graphite configuration options for `influxdb.conf`
 *NOTE*: The default for this hash is what is in 1.2.0 of the influx docs
 
 [Influx Graphite Options](https://docs.influxdata.com/influxdb/v1.2/administration/config/#graphite)
->>>>>>> 891dd648f90a5ad265545c73d7abdd31770d7e09
 
 [params.pp](manifests/params.pp#108)
 
 
 ##### `collectd_config`
 
-<<<<<<< HEAD
-Default: OS specific
-=======
 A hash of collectd configuration options for `influxdb.conf`
->>>>>>> 891dd648f90a5ad265545c73d7abdd31770d7e09
 
 *NOTE*: The default for this hash is what is in 1.2.0 of the influx docs
 
@@ -690,15 +461,7 @@ A hash of udp configuration options for `influxdb.conf`
 
 [Influx Udp Options](https://docs.influxdata.com/influxdb/v1.2/administration/config/#udp)
 
-<<<<<<< HEAD
-##### `enable_snapshot`
-
-Default: false
-
-##### `influxdb_stderr_log`
-=======
 [params.pp](manifests/params.pp#156)
->>>>>>> 891dd648f90a5ad265545c73d7abdd31770d7e09
 
 
 ##### `continuous_queries_config`
@@ -707,15 +470,10 @@ A hash of continuous queries configuration options for `influxdb.conf`
 
 *NOTE*: The default for this hash is what is in 1.2.0 of the influx docs
 
-<<<<<<< HEAD
-enable/disable installation of the influxdb packages
-Default: true
-=======
 [Influx Continuous Queries Options](https://docs.influxdata.com/influxdb/v1.2/administration/config/#continuous-queries)
 
 [params.pp](manifests/params.pp#169)
 
->>>>>>> 891dd648f90a5ad265545c73d7abdd31770d7e09
 
 ##### `hinted_handoff_config`
 

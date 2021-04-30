@@ -1,5 +1,3 @@
-<<<<<<< HEAD
-=======
 ##2019-??-?? - Release ?.?.?
 ###Summary
 - Add support for Puppet v4.x, v5.x, & v6.x.
@@ -39,7 +37,6 @@ asking influxdb maintainer to stop removing previous versions from the repos
 
 Special tnx to andyroyle for the 0.10.X fixes
 
->>>>>>> 891dd648f90a5ad265545c73d7abdd31770d7e09
 ##2015-12-11 - Release 2.2.0
 ###Summary
 - add meta_dir as a parameter
