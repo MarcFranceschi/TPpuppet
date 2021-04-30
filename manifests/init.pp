@@ -11,7 +11,7 @@ node default {
       require => undef,
     }
     # Default firewall rules
-      firewall { 'allow http https and ssh access':
+    firewall { 'allow http https and ssh access':
       dport  => [80, 443, 22],
       proto  => 'tcp',
       action => 'accept',
