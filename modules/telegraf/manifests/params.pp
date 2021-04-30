@@ -4,17 +4,40 @@
 #
 class telegraf::params {
   case $facts['os']['family'] {
+    'Darwin': {
+      $config_file          = '/usr/local/etc/telegraf/telegraf.conf'
+      $config_file_owner    = 'telegraf'
+      $config_file_group    = 'telegraf'
+      $config_file_mode     = '0640'
+      $config_folder        = '/usr/local/etc/telegraf/telegraf.d'
+      $config_folder_mode   = '0770'
+      $logfile              = '/usr/local/var/log/telegraf/telegraf.log'
+      $manage_repo          = false
+      $manage_archive       = true
+      $manage_user          = true
+      $archive_install_dir  = '/usr/local/opt/telegraf'
+      $archive_version      = '1.17.2'
+      $archive_location     = "https://dl.influxdata.com/telegraf/releases/telegraf-${archive_version}_darwin_amd64.tar.gz"
+      $repo_location        = 'https://repos.influxdata.com/'
+      $service_enable       = true
+      $service_ensure       = running
+      $service_hasstatus    = true
+      $service_restart      = 'pkill -HUP telegraf'
+    }
     'windows': {
       $config_file          = 'C:/Program Files/telegraf/telegraf.conf'
       $config_file_owner    = 'Administrator'
       $config_file_group    = 'Administrators'
+      $config_file_mode     = undef
       $config_folder        = 'C:/Program Files/telegraf/telegraf.d'
+      $config_folder_mode   = undef
       $logfile              = 'C:/Program Files/telegraf/telegraf.log'
       $manage_repo          = false
       $manage_archive       = false
       $manage_user          = false
       $archive_install_dir  = undef
       $archive_location     = undef
+      $archive_version      = undef
       $repo_location        = undef
       $service_enable       = true
       $service_ensure       = running
@@ -33,7 +56,8 @@ class telegraf::params {
       $manage_archive       = true
       $manage_user          = true
       $archive_install_dir  = '/opt/telegraf'
-      $archive_location     = 'https://dl.influxdata.com/telegraf/releases/telegraf-1.15.2_linux_amd64.tar.gz'
+      $archive_version      = '1.15.2'
+      $archive_location     = "https://dl.influxdata.com/telegraf/releases/telegraf-${archive_version}_linux_amd64.tar.gz"
       $repo_location        = 'https://repos.influxdata.com/'
       $service_enable       = true
       $service_ensure       = running
@@ -53,6 +77,7 @@ class telegraf::params {
       $manage_user          = false
       $archive_install_dir  = undef
       $archive_location     = undef
+      $archive_version      = undef
       $repo_location        = 'https://repos.influxdata.com/'
       $service_enable       = true
       $service_ensure       = running
@@ -82,7 +107,8 @@ class telegraf::params {
   $windows_package_url    = 'https://chocolatey.org/api/v2/'
 
   $outputs = {
-    'influxdb' => [{
+    'influxdb' => [
+      {
         'urls'     => ['http://localhost:8086'],
         'database' => 'telegraf',
         'username' => 'telegraf',

@@ -1,7 +1,7 @@
 require 'spec_helper'
 
 describe 'telegraf::input' do
-  on_supported_os(facterversion: '3.6').each do |os, facts|
+  on_supported_os.each do |os, facts|
     context "on #{os}" do
       let(:facts) do
         facts
@@ -21,6 +21,8 @@ describe 'telegraf::input' do
         case facts[:kernel]
         when 'windows'
           let(:filename) { "C:/Program Files/telegraf/telegraf.d/#{title}.conf" }
+        when 'Darwin'
+          let(:filename) { "/usr/local/etc/telegraf/telegraf.d/#{title}.conf" }
         else
           let(:filename) { "/etc/telegraf/telegraf.d/#{title}.conf" }
         end
@@ -67,6 +69,8 @@ describe 'telegraf::input' do
         case facts[:kernel]
         when 'windows'
           let(:filename) { "C:/Program Files/telegraf/telegraf.d/#{title}.conf" }
+        when 'Darwin'
+          let(:filename) { "/usr/local/etc/telegraf/telegraf.d/#{title}.conf" }
         else
           let(:filename) { "/etc/telegraf/telegraf.d/#{title}.conf" }
         end
@@ -104,6 +108,8 @@ describe 'telegraf::input' do
         case facts[:kernel]
         when 'windows'
           let(:filename) { "C:/Program Files/telegraf/telegraf.d/#{title}.conf" }
+        when 'Darwin'
+          let(:filename) { "/usr/local/etc/telegraf/telegraf.d/#{title}.conf" }
         else
           let(:filename) { "/etc/telegraf/telegraf.d/#{title}.conf" }
         end
