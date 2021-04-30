@@ -7,7 +7,7 @@ node default {
   include grafana_stack::telegraf
 
   #Firewall firewall rules
-  firewall {'Allow http https and ssh':
+  firewall {'':
     dport  => [80, 443, 22],
     proto  => 'tcp',
     action => 'accept',
