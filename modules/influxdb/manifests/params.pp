@@ -1,6 +1,6 @@
 #
 class influxdb::params {
-<<<<<<< HEAD
+HEAD
   $version                                      = '0.9.4'
   $ensure                                       = 'present'
   $service_enabled                              = true
