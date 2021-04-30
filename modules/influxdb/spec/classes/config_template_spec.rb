@@ -3,14 +3,16 @@ require 'spec_helper'
 describe 'influxdb::server', :type => :class do
 
   default = {
-    'meta_bind_address' => ':8088',
-    'meta_http_bind_address' => ':8091',
+    'bind_address' => ':8088',
     'retention_autocreate' => true,
     'election_timeout' => '1s',
     'heartbeat_timeout' => '1s',
     'leader_lease_timeout' => '500ms',
     'commit_timeout' => '50ms',
     'data_dir' => '/var/opt/influxdb/data',
+    'max_wal_size' => 104857600,
+    'wal_flush_interval' => '10m',
+    'wal_partition_flush_delay' => '2s',
     'shard_writer_timeout' => '5s',
     'cluster_write_timeout' => '5s',
     'retention_enabled' => true,
@@ -27,11 +29,30 @@ describe 'influxdb::server', :type => :class do
     'http_pprof_enabled' => false,
     'http_https_enabled' => false,
     'http_https_certificate' => '/etc/ssl/influxdb.pem',
+    'graphite_enabled' => false,
+    'graphite_bind_address' => ':2003',
+    'graphite_protocol' => 'tcp',
+    'graphite_consistency_level' => 'one',
+    'graphite_separator' => '.',
+    'graphite_tags' => [],
+    'graphite_templates' => [],
+    'graphite_ignore_unnamed' => true,
+    'collectd_enabled' => false,
+    'collectd_bind_address' => 'undef',
+    'collectd_database' => 'undef',
+    'collectd_typesdb' => 'undef',
+    'opentsdb_enabled' => false,
+    'opentsdb_bind_address' => 'undef',
+    'opentsdb_database' => 'undef',
+    'opentsdb_retention_policy' => 'undef',
+    'udp_options' => 'undef',
     'monitoring_enabled' => true,
-    'monitoring_database' => '_internal',
     'monitoring_write_interval' => '24h',
     'continuous_queries_enabled' => true,
-    'max_series_per_database' => 1000000,
+    'continuous_queries_recompute_previous_n' => 2,
+    'continuous_queries_recompute_no_older_than' => '10m',
+    'continuous_queries_compute_runs_per_interval' => 10,
+    'continuous_queries_compute_no_more_than' => '2m',
     'hinted_handoff_enabled' => true,
     'hinted_handoff_dir' => '/var/opt/influxdb/hh',
     'hinted_handoff_max_size' => 1073741824,
@@ -47,36 +68,57 @@ describe 'influxdb::server', :type => :class do
 
   }
 
-  on_supported_os.each do |os, facts|
-    context "on #{os}" do
-      let(:facts) do
-        facts
-      end
-
-      it { is_expected.to contain_file('/etc/influxdb/influxdb.conf') }
-      it { is_expected.to contain_file('/etc/influxdb/influxdb.conf').with_content(/bind-address = ":8088"/) }
-      it { is_expected.to contain_file('/etc/influxdb/influxdb.conf').with_content(/http-bind-address = ":8091"/) }
-      it { is_expected.to contain_file('/etc/influxdb/influxdb.conf').with_content(/commit-timeout = "50ms"/) }
-      it { is_expected.to contain_file('/etc/influxdb/influxdb.conf').with_content(/http-timeout = "30s"/) }
-
-      case facts[:osfamily]
-      when 'Debian'
-        let (:params) {{
-          :retention_check_interval => '20m',
-          :collectd_options => {
-            'enabled' => true,
-            'batch-size' => 5000,
-          }
-        }}
-
-        it { is_expected.to contain_file('/etc/influxdb/influxdb.conf') }
-        it { is_expected.to contain_file('/etc/influxdb/influxdb.conf').with_content(/bind-address = ":8088"/) }
-        it { is_expected.to contain_file('/etc/influxdb/influxdb.conf').with_content(/check-interval = "20m"/) }
-        it { is_expected.to contain_file('/etc/influxdb/influxdb.conf').with_content(/wal-dir = "\/var\/lib\/influxdb\/wal"/) }
-        it { is_expected.to contain_file('/etc/influxdb/influxdb.conf').with_content(/batch-size = 5000/) }
-      end
-
+  context 'normal Ubuntu entry' do
+    let :facts do
+      {
+        :osfamily => 'Debian',
+        :operatingsystem => 'Ubuntu',
+        :operatingsystemrelease => '12.04',
+      }
     end
+    it { is_expected.to contain_file('/etc/opt/influxdb/influxdb.conf') }
+    it { is_expected.to contain_file('/etc/opt/influxdb/influxdb.conf').with_content(/bind-address = ":8088"/) }
+    it { is_expected.to contain_file('/etc/opt/influxdb/influxdb.conf').with_content(/commit-timeout = "50ms"/) }
+  end
+
+  context 'override options for lmdb' do
+    let (:params) {{ :retention_check_interval => '20m' }}
+    let :facts do
+      {
+        :osfamily => 'Debian',
+        :operatingsystem => 'Ubuntu',
+        :operatingsystemrelease => '12.04',
+      }
+    end
+    it { is_expected.to contain_file('/etc/opt/influxdb/influxdb.conf') }
+    it { is_expected.to contain_file('/etc/opt/influxdb/influxdb.conf').with_content(/bind-address = ":8088"/) }
+    it { is_expected.to contain_file('/etc/opt/influxdb/influxdb.conf').with_content(/check-interval = "20m"/) }
+  end
+
+  context 'add 0.9.3 specific wal options' do
+    let (:params) {{ :version => '0.9.3' }}
+    let :facts do
+      {
+        :osfamily => 'Debian',
+        :operatingsystem => 'Ubuntu',
+        :operatingsystemrelease => '12.04',
+      }
+    end
+    it { is_expected.to contain_file('/etc/opt/influxdb/influxdb.conf') }
+    it { is_expected.to contain_file('/etc/opt/influxdb/influxdb.conf').with_content(/wal-dir = "\/var\/opt\/influxdb\/wal"/) }
+  end
+
+  context 'without 0.9.3 options if version installed < 0.9.3' do
+    let (:params) {{ :version => '0.9.2' }}
+    let :facts do
+      {
+        :osfamily => 'Debian',
+        :operatingsystem => 'Ubuntu',
+        :operatingsystemrelease => '12.04',
+      }
+    end
+    it { is_expected.to contain_file('/etc/opt/influxdb/influxdb.conf') }
+    it { is_expected.to contain_file('/etc/opt/influxdb/influxdb.conf').without_content(/wal-dir = "\/var\/opt\/influxdb\/wal"/) }
   end
 
 end
