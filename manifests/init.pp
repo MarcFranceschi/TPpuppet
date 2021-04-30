@@ -1,10 +1,5 @@
 node default {
   include lamp::apache
-  include lamp::mysql
-  include lamp::php
-  include grafana_stack::grafana
-  include influxdb
-  include grafana_stack::telegraf
 
     Exec {
       path => ["/usr/bin", "/bin", "/usr/sbin", "/sbin", "/usr/local/bin", "/usr/local/sbin"]
