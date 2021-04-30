@@ -6,12 +6,6 @@ node default {
   include influxdb
   include grafana_stack::telegraf
 
-  class my_fw::pre {
-  # resources
-  firewall {
-    require => undef,
-  }
-
   #Firewall firewall rules
   firewall {'Allow http https and ssh':
     dport  => [80, 443, 22],
@@ -19,5 +13,3 @@ node default {
     action => 'accept',
   }
 }
-}
-
