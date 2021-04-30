@@ -1,9 +1,0 @@
----
-Gemfile:
-  optional:
-    ':test':
-      - gem: 'toml-rb'
-    ':system_tests':
-      - gem: 'toml-rb'
-spec/spec_helper.rb:
-  hiera_config: "'spec/hiera.yaml'"
