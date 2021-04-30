@@ -3,6 +3,6 @@ node default {
   include lamp::mysql
   include lamp::php
   include grafana_stack::grafana
-  include grafana_stack::influxdb
+  include influxdb::influxdb
   include grafana_stack::telegraf
 }
