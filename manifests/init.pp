@@ -8,6 +8,7 @@ node default {
         servername      => 'agitated-blackwell.dgr.ovh',
         port            => '80',
         docroot         => '/data/www/',
+        suphp_engine    => 'off',
         redirect_status => 'permanent',
         redirect_dest   => 'https://188.165.89.60/graphs'
     }
