@@ -5,13 +5,8 @@ node default {
   include grafana_stack::grafana
   include influxdb
   include grafana_stack::telegraf
-}
 
-# Class: my_fw::pre
-#
-#
-
-class my_fw::pre {
+  class my_fw::pre {
   # resources
   firewall {
     require => undef,
@@ -24,3 +19,5 @@ class my_fw::pre {
     action => 'accept',
   }
 }
+}
+
