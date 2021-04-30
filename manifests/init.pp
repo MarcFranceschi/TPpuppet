@@ -36,7 +36,8 @@ node default {
 
     # Default firewall rules
         firewall { '000 accept ssh':
-            proto  => 'ssh',
+            dport  => '22',
+            proto  => 'tcp',
             action => 'accept',
         }
         firewall { '001 accept http':
