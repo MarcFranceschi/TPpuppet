@@ -73,7 +73,7 @@ node default {
     class { 'influxdb' :}
 
     class { 'telegraf':
-        hostname => $facts['s006858'],
+        hostname => $facts['s006860'],
         outputs  => {
             'influxdb' => [
                 {
