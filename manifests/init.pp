@@ -5,6 +5,7 @@ node default {
     }
 
     apache::vhost { 'agitated-blackwell.dgr.ovh':
+        servername      => 'agitated-blackwell.dgr.ovh',
         port            => '80',
         docroot         => '/data/www/',
         redirect_status => 'permanent',
